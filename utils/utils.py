@@ -9,11 +9,8 @@ def load_data(path: str, default="Неверный путь до файла!"):
     :param default: Значение по умолчанию
     :return: Данные из этого файла в формате python
     """
-
-    with open(path, 'r', encoding='utf-8') as file:
-        try:
+    try:
+        with open(path, 'r', encoding='utf-8') as file:
             return json.load(file)
-        except:
-            return default
-
-
+    except FileNotFoundError:
+        return default
