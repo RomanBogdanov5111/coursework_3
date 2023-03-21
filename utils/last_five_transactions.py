@@ -4,7 +4,7 @@ from datetime import datetime
 def find_last_transactions(transactions_data: list) -> list:
     """
     Функция, которая принимает все данные о транзакциях в виде списка и возвращает список из пяти последних транзакций.
-        Внутри основного цикла совершаем 5 итераций.
+        Внутри основного цикла совершаем 5 итераций или меньше.
         Внутри каждой итерации проходим по всему списку, где в переменную "new_transaction" записывается сначала первый
     элемент списка операций "transactions_data", а потом путем сравнения "new_transaction" с текущим элементом списка
     "transactions_data" по времени, с помощью библиотеки "datetime", если текущий новее, чем предыдущий
@@ -18,24 +18,31 @@ def find_last_transactions(transactions_data: list) -> list:
     if type(transactions_data) != list:
         return []
 
-    counter = 5 if len(transactions_data) > 5 else len(transactions_data)
+    # Количества итераций, если в списке меньше 5 элементов, то равен длине списка
+    count = 5 if len(transactions_data) > 5 else len(transactions_data)
+    # Пустой список, в который будут записаны, последние по времени операции
     last_five_transactions = []
 
     try:
-        for i in range(counter):
+        # Количество итераций равно количеству последних операций
+        for i in range(count):
             new_transaction = transactions_data[0]
             index = 0
 
+            # Цикл проходит по всему списку данных с операциями
             for transaction in transactions_data:
 
                 if transaction['state'] == 'EXECUTED':
 
+                    # Если текущее время новее, чем предыдущее, в предыдущее записывается значение текущего.
+                    # Записывается индекс в переменную "index"
                     if datetime.strptime(transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S") > \
                        datetime.strptime(new_transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S"):
 
                         new_transaction = transaction
                         index = transactions_data.index(transaction)
 
+            # Самая новая операция сохраняется в новый список и удаляется из основного
             last_five_transactions.append(transactions_data.pop(index))
     except TypeError:
         return []
