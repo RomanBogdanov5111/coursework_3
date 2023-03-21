@@ -1,5 +1,6 @@
 from utils.last_five_transactions import find_last_transactions
 from utils.last_five_transactions import split_card_number
+from utils.last_five_transactions import output_data
 import pytest
 
 
@@ -49,3 +50,28 @@ def test_find_last_transactions(data, result):
 ])
 def test_split_card_number(number, res):
     assert split_card_number(number) == res
+
+
+@pytest.mark.parametrize('data,result', [
+    ([{
+        "id": 863064926,
+        "state": "EXECUTED",
+        "date": "2019-12-08T22:46:21.935582",
+        "operationAmount": {
+            "amount": "41096.24",
+            "currency": {
+                "name": "USD",
+                "code": "USD"
+            }
+        },
+        "description": "Открытие вклада",
+        "to": "Счет 90424923579946435907"
+    }], [{'date': '8.12.2019 Открытие вклада', 'from_to': 'Счет **5907', 'amount_and_name': '41096.24 USD'}]),
+    ('word', []),
+    ([], []),
+    ([{}], []),
+    ([1, 2, 3, 4], [])
+
+])
+def test_output_data(data, result):
+    assert output_data(data) == result
