@@ -14,3 +14,7 @@ def load_data(path: str, default="Неверный путь до файла!"):
             return json.load(file)
     except FileNotFoundError:
         return default
+    except TypeError:
+        return default
+    except OSError:
+        return default
