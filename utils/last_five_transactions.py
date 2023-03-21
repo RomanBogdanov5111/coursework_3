@@ -62,3 +62,52 @@ def split_card_number(card_number: str) -> str:
         new_card_number[4:6] + ['** **** '] +
         new_card_number[-4:]
     )
+
+
+def output_data(last_transactions: list) -> list:
+    """
+    Функция принимает данные последних пяти операций и приводит их в состояние, готовое для вывода пользователю.
+    :param last_transactions: Список словарей с данными последних пяти транзакций
+    :return: Список словарей с данными последних пяти транзакций, подготовленных для вывода на экран
+    """
+
+    if type(last_transactions) != list or len(last_transactions) == 0:
+        return []
+
+    # Новый список, который вернет функция
+    new_last_transactions = []
+    try:
+        # Цикл, в каждой итерации которого, создается словарь внутри списка "new_last_transactions"
+        for index in range(len(last_transactions)):
+
+            # Создали пустой словарь. Преобразовали дату в понятный для питона вид и записали в переменную
+            new_last_transactions.append({})
+            date = datetime.strptime(last_transactions[index]['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S")
+
+            # Создали ключ 'date', записали по нему дату и описание перевода
+            new_last_transactions[index]['date'] = f'{date.day}.{date.month}.{date.year} ' \
+                                                   f'{last_transactions[index]["description"]}'
+
+            # Если описание перевода не "Открытие вклада" создали ключ "from_to", записали в него номер отправителя
+            # и получателя
+            if last_transactions[index]["description"] != "Открытие вклада":
+
+                new_last_transactions[index]['from_to'] = \
+                    f'{last_transactions[index]["from"].split(" ")[0]} ' \
+                    f'{split_card_number(last_transactions[index]["from"].split(" ")[-1])} -> ' \
+                    f'Счет **{last_transactions[index]["to"].split(" ")[-1][-4:]}'
+
+            # Если операция "открытие вклада" записывается только номер карты получателя
+            else:
+                new_last_transactions[index]['from_to'] = f'Счет **{last_transactions[index]["to"].split(" ")[-1][-4:]}'
+
+            # Создали ключ "amount_and_name", записали в него сумму и валюту перевода
+            new_last_transactions[index]['amount_and_name'] = \
+                f'{last_transactions[index]["operationAmount"]["amount"]} ' \
+                f'{last_transactions[index]["operationAmount"]["currency"]["name"]}'
+    except KeyError:
+        return []
+    except TypeError:
+        return []
+
+    return new_last_transactions
