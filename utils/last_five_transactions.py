@@ -7,11 +7,11 @@ def find_last_transactions(transactions_data: list) -> list:
         Внутри основного цикла совершаем 5 итераций.
         Внутри каждой итерации проходим по всему списку, где в переменную "new_transaction" записывается сначала первый
     элемент списка операций "transactions_data", а потом путем сравнения "new_transaction" с текущим элементом списка
-    "transactions_data" по времени, с помощью библиотеки "datetime", если текущий новее, чем "new_transaction",
-    в "new_transaction" записывается значение текущего. В конце цикла значение "new_transaction" удаляется из
-    "transactions_data" по индексу.
+    "transactions_data" по времени, с помощью библиотеки "datetime", если текущий новее, чем предыдущий
+    в предыдущий записывается значение текущего. В конце цикла значение "new_transaction" удаляется из
+    "transactions_data".
     :param transactions_data: Список словарей с данными о денежных переводах
-    :return: Список из пяти последних денежных переводах
+    :return: Список данных с пятью последними денежными переводами.
     """
 
     last_five_transactions = []
@@ -21,15 +21,13 @@ def find_last_transactions(transactions_data: list) -> list:
 
         for transaction in transactions_data:
 
-            if datetime.strptime(transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S") > \
-               datetime.strptime(new_transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S"):
+            if transaction['state'] == 'EXECUTED':
 
-                if transaction['state'] == 'EXECUTED':
+                if datetime.strptime(transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S") > \
+                   datetime.strptime(new_transaction['date'].split('.')[0], "%Y-%m-%dT%H:%M:%S"):
+
                     new_transaction = transaction
                     index = transactions_data.index(transaction)
-
-                else:
-                    transactions_data.remove(transaction)
 
         last_five_transactions.append(transactions_data.pop(index))
 
