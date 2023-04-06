@@ -1,2 +1,2 @@
-# term_paper_3
+# coursework_3
 SkyPro Курсовая работа №3
